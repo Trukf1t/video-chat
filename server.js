@@ -1,29 +1,64 @@
 const express = require('express')
 const app = express()
 const http = require('http').Server(app)
-//const https = require('https')
 const io = require('socket.io')(http)
-//const io = require('socket.io')(https)
 const port = process.env.PORT || 3000;
 
-//Para el certificado descomentar
-const fs = require('fs');
-
-
-const httpsOptions = {
-    key: fs.readFileSync('./certssl/key-20200329-184543.pem'),
-    cert: fs.readFileSync('./certssl/cert-20200329-184543.crt')
-}
-
+let activeSockets = [] // Array to store all te active sockets
 
 app.use(express.static(__dirname + "/public"))
+
+app.set('view engine', 'hbs'); // Handlebars, this is to send informcion from server to front(index.html)...trukfit
+
+app.get('/', (req, res)=>{
+    res.render('index',{
+        mysocket: activeSockets[0]
+    });
+})
+
+app.use(ignoreFavicon);
+
+function ignoreFavicon(req, res, next) {
+    if (req.originalUrl === '/favicon.ico') {
+      res.status(204).json({nope: true});
+    } else {
+      next();
+    }
+  }
+
 let clients = 0
 
 io.on('connection', function (socket) {
+    
+    const existingSocket = activeSockets.find(
+        existingSocket => existingSocket === socket.id
+    );
+    
+    if (!existingSocket) {
+        activeSockets.push(socket.id);
+        console.log(`Lista de sockets ${activeSockets}`);
+        socket.emit("update-user-list", {
+          users: activeSockets.filter(
+            existingSocket => existingSocket !== socket.id
+          ),
+          myuser: activeSockets.find(
+            existingSocket => existingSocket === socket.id
+          )
+        });
+
+        socket.broadcast.emit("update-user-list", {
+          users: [socket.id],
+          myuser: existingSocket
+        });
+    }
+
     socket.on("NewClient", function () {
-        if (clients < 2) {
-            if (clients == 1) {
+        if (clients < 2) {            
+            if (clients == 1) {                
                 this.emit('CreatePeer')
+                console.log(`Second user socket: ${socket.id}`);
+            }else{
+                console.log(`My socket: ${socket.id}`);
             }
         }
         else
@@ -40,6 +75,7 @@ function Disconnect() {
         if (clients <= 2)
             this.broadcast.emit("Disconnect")
         clients--
+        //activeSockets.pop()
     }
 }
 
@@ -52,6 +88,5 @@ function SendAnswer(data) {
 }
 
 http.listen(port, () => console.log(`Active on ${port} port`))
-//https.createServer(httpsOptions, app).listen(port, () => console.log(`Active on ${port} port`))
 
 

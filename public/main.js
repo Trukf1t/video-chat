@@ -6,6 +6,10 @@ const filter = document.querySelector('#filter')
 const checkboxTheme = document.querySelector('#theme')
 let client = {}
 let currentFilter
+
+
+
+
 //get stream
 navigator.mediaDevices.getUserMedia({ video: true, audio: true })
     .then(stream => {
@@ -112,6 +116,11 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         socket.on('CreatePeer', MakePeer)
         socket.on('Disconnect', RemovePeer)
 
+        socket.on("update-user-list", ({ users, myuser }) => {
+            //console.log(users);
+            updateUserList(users, myuser);
+        });
+
     })
     .catch(err => document.write(err))
 
@@ -141,3 +150,60 @@ function CreateDiv() {
     if (checkboxTheme.checked == true)
         document.querySelector('#muteText').style.color = "#fff"
 }
+
+
+function updateUserList(socketIds, myuserId) {
+    //console.log(socketIds);
+    console.log(myuserId);
+    const activeUserContainer = document.getElementById("active-user-container");
+    const myUserContainer = document.getElementById("your-user-container");
+  
+    socketIds.forEach(socketId => {
+      const alreadyExistingUser = document.getElementById(socketId);
+      if (!alreadyExistingUser) {
+        const userContainerEl = createUserItemContainer(socketId);
+  
+        activeUserContainer.appendChild(userContainerEl);
+      }
+    });
+  
+    myuserId.forEach(myuserId => {
+      const alreadyExistingUser = document.getElementById(myuserId);
+      if (!alreadyExistingUser) {
+        const userContainerEl = createMyUserItemContainer(myuserId);
+  
+        myUserContainer.appendChild(userContainerEl);
+      }
+    });
+}
+
+
+  function createMyUserItemContainer(socketId) {
+    const userContainerEl = document.createElement("div");
+  
+    const usernameEl = document.createElement("p");
+  
+    userContainerEl.setAttribute("class", "your-user");
+    userContainerEl.setAttribute("id", socketId);
+    usernameEl.setAttribute("class", "username");
+    usernameEl.innerHTML = `MySocket: ${socketId}`;
+  
+    userContainerEl.appendChild(usernameEl);
+  
+    return userContainerEl;
+}
+  
+  function createUserItemContainer(socketId) {
+    const userContainerEl = document.createElement("div");
+  
+    const usernameEl = document.createElement("p");
+  
+    userContainerEl.setAttribute("class", "active-user");
+    userContainerEl.setAttribute("id", socketId);
+    usernameEl.setAttribute("class", "username");
+    usernameEl.innerHTML = `Socket: ${socketId}`;
+  
+    userContainerEl.appendChild(usernameEl);  
+    return userContainerEl;
+}
+  

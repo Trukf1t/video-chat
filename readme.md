@@ -8,5 +8,6 @@ Install dependencies - npm install
 Start - npm start  
 
 For development run watchify - npm run watch  
-
+For test with nodemon - npm run dev
+For https open in browser like https://<localhost/ip>:3000
 Open localhost in two browser tabs.

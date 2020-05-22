@@ -8,6 +8,7 @@
 </head>
 
 <body>
+    <h4>HBS</h4>
     <div class="container-fluid">
         <div class="row h-10 w-100">
             <div class="col">
@@ -31,13 +32,23 @@
                 </div>
             </div>
         </div>
-        <div class="row h-90 w-100">
+        <div class="row w-100">
+            <div class="your-user-panel col-sm-4" aria-readonly="true" id="your-user-container">
+                <h6 class="panel-title">Your User:</h6>
+            </div>            
             <div class="col-12 col-sm-6 d-flex justify-content-center">
-                <div class="embed-responsive embed-responsive-16by9">
+                <div class="active-users-panel col-sm-4" id="active-user-container">
+                  <h6 class="panel-title">Active Users:</h6>
+                </div>               
+            </div>
+        </div>
+        <div class="row h-90 w-100">            
+            <div class="col-12 col-sm-6 d-flex justify-content-center">
+                <div class="embed-responsive embed-responsive-16by9">                    
                     <video class="embed-responsive-item" muted></video>
                 </div>
             </div>
-            <div class="col-12 col-sm-6 d-flex justify-content-center">
+            <div class="col-12 col-sm-6 d-flex justify-content-center">                
                 <div id="peerDiv" class="embed-responsive embed-responsive-16by9">
                 </div>
             </div>

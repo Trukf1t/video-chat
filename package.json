@@ -5,15 +5,18 @@
   "main": "main.js",
   "scripts": {
     "start": "node server.js",
-    "watch": "npx watchify ./public/main.js -o ./public/bundle.js"
+    "watch": "npx watchify ./public/main.js -o ./public/bundle.js",
+    "dev": "nodemon server.js"
   },
   "author": "Vinayak Sinha",
   "dependencies": {
     "express": "^4.16.4",
+    "hbs": "^4.1.1",
     "simple-peer": "^9.2.1",
     "socket.io": "^2.2.0"
   },
   "devDependencies": {
+    "nodemon": "^2.0.4",
     "watchify": "^3.11.1"
   }
 }
